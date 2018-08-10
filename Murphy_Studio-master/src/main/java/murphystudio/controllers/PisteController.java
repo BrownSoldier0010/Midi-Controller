@@ -79,7 +79,7 @@ public class PisteController extends Controller
             this.piste_instrument_selection.getItems().add(instrument.getKey());
         }
 
-        this.piste_instrument_selection.getSelectionModel().select("Piano");
+        this.piste_instrument_selection.getSelectionModel().select("Bass");
 
         recordPisteBtn.setOnMouseClicked(event -> {
             if ( this.model.mainExternInterface.sequencer.isRecording() )
