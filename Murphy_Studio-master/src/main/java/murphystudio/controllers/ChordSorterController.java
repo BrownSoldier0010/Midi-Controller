@@ -421,6 +421,13 @@ public class ChordSorterController extends Controller {
         return accords;
     }
 
+    public void recreteTimline(PisteController piste){
+        Accord[] accords = new Accord[piste.getNotes().size()];
+        piste.getNotes().toArray(accords);
+        piste.addSequence(this.model.midiInterface.createTrackFromChords(accords));
+        piste.addChords(this.model.midiInterface.getChordGridSize(accords));
+    }
+
     public void addChordsToTimeline(PisteController piste){
         piste.addSequence(this.model.midiInterface.createTrackFromChords(this.getAccords()));
         piste.addChords(this.model.midiInterface.getChordGridSize(this.getAccords()));
