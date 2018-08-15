@@ -24,7 +24,6 @@ public class MidiInterface {
         try {
             this.synthesizer = MidiSystem.getSynthesizer();
             synthesizer.open();
-
             this.receiverMidiChannel = this.synthesizer.getChannels()[0];
             this.receiver = new CustomReceiver(this.receiverMidiChannel);
 
@@ -58,7 +57,6 @@ public class MidiInterface {
 
             Sequence sequence = new Sequence(Sequence.PPQ, this.MidiTick);
             Track track = sequence.createTrack();
-
             int totalTick = 0;
 
             for (Accord chord : chords) {
@@ -117,6 +115,7 @@ public class MidiInterface {
         track.add(createMidiEvent(ShortMessage.NOTE_ON, 1, note, velocity, start));
         track.add(createMidiEvent(ShortMessage.NOTE_OFF, 1, note, velocity, start + duration));
     }
+
 
     /*
      * @RETURN shortMessage ("shortcut" function)

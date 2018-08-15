@@ -22,6 +22,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequencer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class ChordSorterController extends Controller {
@@ -343,6 +344,13 @@ public class ChordSorterController extends Controller {
         }
     }
 
+    public void addNotesToPiste(PisteController piste){
+        ArrayList<Accord> notes =  piste.getNotes();
+        Accord[] accords = this.getAccords();
+        Collections.addAll(notes, accords);
+        piste.setNotes(notes);
+    }
+
     public void changeSelectedTileChord(Accord accord)
     {
         if ( selected == null ) return;
@@ -416,6 +424,7 @@ public class ChordSorterController extends Controller {
     public void addChordsToTimeline(PisteController piste){
         piste.addSequence(this.model.midiInterface.createTrackFromChords(this.getAccords()));
         piste.addChords(this.model.midiInterface.getChordGridSize(this.getAccords()));
+        addNotesToPiste(piste);
     }
 
 }

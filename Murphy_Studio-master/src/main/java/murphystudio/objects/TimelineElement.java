@@ -3,6 +3,8 @@ package murphystudio.objects;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 
 public class TimelineElement extends Rectangle {
 

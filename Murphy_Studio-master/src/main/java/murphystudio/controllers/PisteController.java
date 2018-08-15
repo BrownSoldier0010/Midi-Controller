@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import murphystudio.models.MainModel;
+import murphystudio.objects.Accord;
 import murphystudio.objects.TimelineElement;
 
 import javax.sound.midi.*;
@@ -13,8 +14,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class PisteController extends Controller
-{
+public class PisteController extends Controller {
+
+    private ArrayList<Accord> notes;
 
     @FXML
     public TextField piste_name_input;
@@ -46,51 +48,43 @@ public class PisteController extends Controller
     private Integer instrument;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)
-    {
+    public void initialize(URL location, ResourceBundle resources) {
         this.end = 0.0;
-        this.chords = new ArrayList<TimelineElement>();
+        this.chords = new ArrayList<>();
         /*
             /!\ ATTENTION /!\
             Ici le controller n'est pas encore chargé.
             La méthode initialize est appelée lorsque l'on fait FXMLLoader.load(); (CF murphystudio.application.Controller - @loadView() )
          */
         /* Tout ce qui agit sur le fxml, tu le code ici */
-
     }
 
-    private void initAll()
-    {
+    private void initAll() {
         this.deletePistePtn.setOnMouseClicked(event -> {
             this.model.pisteLayoutController.removePiste(this);
         });
 
         this.playBtn.setOnMouseClicked(event -> {
-            if ( this.sequence != null )
-            {
-                if ( ! this.isPlaying )
+            if (this.sequence != null) {
+                if (!this.isPlaying)
                     this.play();
                 else
                     this.stop();
 
             }
         });
-        for (Map.Entry<String, Integer> instrument: this.model.intrumentsMIDI.entrySet()) {
+        for (Map.Entry<String, Integer> instrument : this.model.intrumentsMIDI.entrySet()) {
             this.piste_instrument_selection.getItems().add(instrument.getKey());
         }
 
-        this.piste_instrument_selection.getSelectionModel().select("Bass");
+        this.piste_instrument_selection.getSelectionModel().select("Choir");
 
         recordPisteBtn.setOnMouseClicked(event -> {
-            if ( this.model.mainExternInterface.sequencer.isRecording() )
-            {
+            if (this.model.mainExternInterface.sequencer.isRecording()) {
                 this.sequence = this.model.mainExternInterface.stopRecording();
                 recordPisteBtn.setText("○");
-            }
-            else
-            {
-                if ( this.model.mainExternInterface.MidiInput != null && this.model.mainExternInterface.MidiOutput != null )
-                {
+            } else {
+                if (this.model.mainExternInterface.MidiInput != null && this.model.mainExternInterface.MidiOutput != null) {
                     this.model.mainExternInterface.startRecording();
                     recordPisteBtn.setText("■");
                 }
@@ -99,8 +93,7 @@ public class PisteController extends Controller
 
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         piste_name_input.setText(name);
     }
 
@@ -109,39 +102,45 @@ public class PisteController extends Controller
         initAll();
     }
 
-    public void addChords(double length){
-        if (length <= 0){return;}
+    public void addChords(double length) {
+        if (length <= 0) {
+            return;
+        }
         TimelineElement new_e = new TimelineElement(this.end, length * 4);
         this.chords.add(new_e);
         this.timeline.getChildren().add(new_e);
-
         ContextMenu rightClickContext = new ContextMenu();
         rightClickContext.getStyleClass().add("background");
         MenuItem menuItemDelete = new MenuItem("Delete");
         rightClickContext.getItems().add(menuItemDelete);
         menuItemDelete.setOnAction(MouseEvent -> this.removeChords(new_e));
         new_e.setOnContextMenuRequested(contextMenuEvent -> rightClickContext.show(this.timeline, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
-
         updateEnd();
     }
 
-    public void removeChords(TimelineElement chords){
+    /**
+     * need to colect current notes in track
+     * remove the note at the index in the storage was thinking a Map<int,Chord>
+     * rebuild the track with the notes left
+     * @param chords
+     */
+    public void removeChords(TimelineElement chords) {
         this.chords.remove(chords);
         this.timeline.getChildren().remove(chords);
         updateEnd();
     }
 
-    public void updateEnd(){
+    public void updateEnd() {
         this.end = 0.0;
-        for (TimelineElement e: this.chords) {
-            if (e.getEnd() > this.end){
+        for (TimelineElement e : this.chords) {
+            if (e.getEnd() > this.end) {
                 this.end = e.getEnd();
             }
         }
         this.end++;
     }
 
-    public String toString(){
+    public String toString() {
         return this.piste_name_input.getCharacters().toString();
     }
 
@@ -168,9 +167,8 @@ public class PisteController extends Controller
         }
     }
 
-    public void stop()
-    {
-        if ( this.sequencer == null || this.sequence == null ) return;
+    public void stop() {
+        if (this.sequencer == null || this.sequence == null) return;
         this.playBtn.setText("Play");
         this.isPlaying = false;
         this.sequencer.stop();
@@ -180,15 +178,22 @@ public class PisteController extends Controller
     public void addSequence(Sequence trackFromChords) {
         this.instrument = this.model.intrumentsMIDI.get(this.piste_instrument_selection.getSelectionModel().getSelectedItem());
 
-        if ( this.sequence == null )
+        if (this.sequence == null)
             this.sequence = this.model.midiInterface.mergeSequence(trackFromChords, null, instrument);
-        else
-        {
+        else {
             this.sequence = this.model.midiInterface.mergeSequence(
                     this.sequence,
                     trackFromChords,
                     instrument
             );
         }
+    }
+
+    public ArrayList<Accord> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(ArrayList<Accord> notes) {
+        this.notes = notes;
     }
 }
