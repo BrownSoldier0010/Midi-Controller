@@ -22,6 +22,11 @@ public class ChordMakerController extends Controller implements Initializable {
     public Button playChordButton;
     public Button saveChordButton;
 
+    public Button eighthNoteButton;
+    public Button quarterNoteButton;
+    public Button halfNoteButton;
+    public Button wholeNoteButton;
+
     public Label chordNameLabel;
 
     public RadioButton doRadio,doDRadio, reRadio,reDRadio, miRadio, faRadio, faDRadio, solRadio, solDRadio, laRadio, laDRadio, siRadio ;
@@ -133,6 +138,27 @@ public class ChordMakerController extends Controller implements Initializable {
 
         saveChordButton.setOnMouseClicked(event -> saveChord());
 
+        eighthNoteButton.setOnMouseClicked(event -> eighthClicked());
+        quarterNoteButton.setOnMouseClicked(event -> quarterClicked());
+        halfNoteButton.setOnMouseClicked(event -> halfClicked());
+        wholeNoteButton.setOnMouseClicked(event -> wholeClicked());
+
+    }
+
+    private void eighthClicked(){
+       System.out.println(8);
+    }
+
+    private void quarterClicked(){
+        System.out.println(4);
+    }
+
+    private void halfClicked(){
+        System.out.println(2);
+    }
+
+    private void wholeClicked(){
+        System.out.println(1);
     }
 
     private void updtInfos()
