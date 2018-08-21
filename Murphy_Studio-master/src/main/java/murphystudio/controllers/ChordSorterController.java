@@ -345,10 +345,8 @@ public class ChordSorterController extends Controller {
     }
 
     public void addNotesToPiste(PisteController piste){
-        ArrayList<Accord> notes =  piste.getNotes();
-        Accord[] accords = this.getAccords();
-        Collections.addAll(notes, accords);
-        piste.setNotes(notes);
+        ArrayList<Accord> notes = this.getAccords();
+        piste.trackNotes.put(piste.trackNotes.size(),notes);
     }
 
     public void changeSelectedTileChord(Accord accord)
@@ -412,20 +410,13 @@ public class ChordSorterController extends Controller {
         }
     }
 
-    private Accord[] getAccords()
+    private ArrayList<Accord> getAccords()
     {
-        Accord[] accords = new Accord[tiles.size()];
+        ArrayList<Accord> accords = new ArrayList<>();
 
         for ( int i = 0; i < tiles.size(); i++ )
-            accords[i] = tiles.get(i).accord;
+            accords.add(tiles.get(i).accord);
         return accords;
-    }
-
-    public void recreteTimline(PisteController piste){
-        Accord[] accords = new Accord[piste.getNotes().size()];
-        piste.getNotes().toArray(accords);
-        piste.addSequence(this.model.midiInterface.createTrackFromChords(accords));
-        piste.addChords(this.model.midiInterface.getChordGridSize(accords));
     }
 
     public void addChordsToTimeline(PisteController piste){

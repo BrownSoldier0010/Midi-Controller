@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import murphystudio.models.MainModel;
 import murphystudio.objects.Accord;
 import murphystudio.objects.TimelineElement;
@@ -11,13 +12,13 @@ import murphystudio.objects.TimelineElement;
 import javax.sound.midi.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class PisteController extends Controller {
-
-    private ArrayList<Accord> notes;
-
+    public HashMap<Integer,ArrayList<Accord>> trackNotes = new HashMap<>();
+public ArrayList<Accord> emply = new ArrayList<>();
     @FXML
     public TextField piste_name_input;
     @FXML
@@ -31,7 +32,7 @@ public class PisteController extends Controller {
     @FXML
     public Button deletePistePtn;
     public Button recordPisteBtn;
-
+    private ChordSorterController controller;
     public Track track;
     public AnchorPane timeline;
     public Button playBtn;
@@ -119,16 +120,31 @@ public class PisteController extends Controller {
     }
 
     /**
-     * need to colect current notes in track
+     * need to collect current notes in track
      * remove the note at the index in the storage was thinking a Map<int,Chord>
      * rebuild the track with the notes left
+     *
      * @param chords
      */
     public void removeChords(TimelineElement chords) {
+        emply.add(new Accord());
+        this.trackNotes.replace(this.chords.indexOf(chords),emply);
+        recreteTimline();
         this.chords.remove(chords);
         this.timeline.getChildren().remove(chords);
         updateEnd();
     }
+
+    public void recreteTimline(){
+        this.sequence = null;
+        for (int i = 0; i < trackNotes.size(); i++) {
+            this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
+            this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get(i)));
+        }
+
+
+    }
+
 
     public void updateEnd() {
         this.end = 0.0;
@@ -187,13 +203,5 @@ public class PisteController extends Controller {
                     instrument
             );
         }
-    }
-
-    public ArrayList<Accord> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(ArrayList<Accord> notes) {
-        this.notes = notes;
     }
 }

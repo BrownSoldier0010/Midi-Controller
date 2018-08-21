@@ -4,6 +4,7 @@ package murphystudio.objects;
 import murphystudio.models.MainModel;
 
 import javax.sound.midi.*;
+import java.util.ArrayList;
 
 public class MidiInterface {
 
@@ -52,7 +53,7 @@ public class MidiInterface {
      * @RETURN Sequence with the track
      * Include corresponding chords
      */
-    public Sequence createTrackFromChords(Accord[] chords) {
+    public Sequence createTrackFromChords(ArrayList<Accord> chords) {
         try {
 
             Sequence sequence = new Sequence(Sequence.PPQ, this.MidiTick);
@@ -255,10 +256,14 @@ public class MidiInterface {
         return sequence;
     }
 
-    public long getChordGridSize(Accord[] accords) {
+    public long getChordGridSize(ArrayList<Accord> accords) {
         long size = 0;
-        for (Accord a : accords)
+        if (accords == null){
+            accords = new ArrayList<>();
+        }
+        for (Accord a : accords) {
             size += a.getTick();
+        }
         return size;
     }
 
