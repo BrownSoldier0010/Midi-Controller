@@ -127,22 +127,22 @@ public class PisteController extends Controller {
      */
     public void removeChords(TimelineElement chords) {
         replaceNote(chords);
-        this.timeline.getChildren().clear();
+        this.timeline.getChildren().remove(chords);
         recreteTimeline();
         updateEnd();
     }
 
     private void replaceNote(TimelineElement chords) {
-        empty.add(new Accord());
-        this.trackNotes.replace(this.chords.indexOf(chords), empty);
+        this.trackNotes.remove(this.chords.indexOf(chords));
+        System.out.println(this.trackNotes.size());
+        System.out.println(this.trackNotes.keySet());
         this.chords.clear();
     }
 
     public void recreteTimeline() {
         this.sequence = null;
-        for (int i = 0; i < trackNotes.size(); i++) {
+        for (int i:this.trackNotes.keySet()) {
             this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
-            this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get(i)));
         }
     }
 
