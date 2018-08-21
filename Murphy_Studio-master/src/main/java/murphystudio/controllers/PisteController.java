@@ -127,12 +127,18 @@ public ArrayList<Accord> emply = new ArrayList<>();
      * @param chords
      */
     public void removeChords(TimelineElement chords) {
+        replaceNote(chords);
+        this.timeline.getChildren().clear();
+        recreteTimline();
+
+
+        updateEnd();
+    }
+
+    private void replaceNote(TimelineElement chords){
         emply.add(new Accord());
         this.trackNotes.replace(this.chords.indexOf(chords),emply);
-        recreteTimline();
         this.chords.remove(chords);
-        this.timeline.getChildren().remove(chords);
-        updateEnd();
     }
 
     public void recreteTimline(){
