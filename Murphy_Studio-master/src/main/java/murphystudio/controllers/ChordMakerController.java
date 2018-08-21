@@ -19,6 +19,8 @@ import java.util.ResourceBundle;
 
 public class ChordMakerController extends Controller implements Initializable {
 
+    public int curNoteLength = 8;
+
     public Button playChordButton;
     public Button saveChordButton;
 
@@ -147,18 +149,26 @@ public class ChordMakerController extends Controller implements Initializable {
 
     private void eighthClicked(){
        System.out.println(8);
+       model.selectedChord.setTick(2);
+       curNoteLength = 2;
     }
 
     private void quarterClicked(){
         System.out.println(4);
+        model.selectedChord.setTick(4);
+        curNoteLength = 4;
     }
 
     private void halfClicked(){
         System.out.println(2);
+        model.selectedChord.setTick(8);
+        curNoteLength = 8;
     }
 
     private void wholeClicked(){
         System.out.println(1);
+        model.selectedChord.setTick(16);
+        curNoteLength = 16;
     }
 
     private void updtInfos()
@@ -204,6 +214,7 @@ public class ChordMakerController extends Controller implements Initializable {
             case "G" : solRadio.fire(); break;
             case "G#" : solDRadio.fire(); break;
         }
+        ch.setTick(curNoteLength);
     }
 
     public void updateFromTile(Tile tile)
