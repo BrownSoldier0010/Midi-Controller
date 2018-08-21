@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class PisteController extends Controller {
-    public HashMap<Integer,ArrayList<Accord>> trackNotes = new HashMap<>();
-public ArrayList<Accord> empty = new ArrayList<>();
+    public HashMap<Integer, ArrayList<Accord>> trackNotes = new HashMap<>();
+    public ArrayList<Accord> empty = new ArrayList<>();
     @FXML
     public TextField piste_name_input;
     @FXML
@@ -128,24 +128,22 @@ public ArrayList<Accord> empty = new ArrayList<>();
     public void removeChords(TimelineElement chords) {
         replaceNote(chords);
         this.timeline.getChildren().clear();
-        recreteTimline();
+        recreteTimeline();
         updateEnd();
     }
 
-    private void replaceNote(TimelineElement chords){
+    private void replaceNote(TimelineElement chords) {
         empty.add(new Accord());
         this.trackNotes.replace(this.chords.indexOf(chords), empty);
-        this.chords.remove(chords);
+        this.chords.clear();
     }
 
-    public void recreteTimline(){
+    public void recreteTimeline() {
         this.sequence = null;
         for (int i = 0; i < trackNotes.size(); i++) {
             this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
             this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get(i)));
         }
-
-
     }
 
 

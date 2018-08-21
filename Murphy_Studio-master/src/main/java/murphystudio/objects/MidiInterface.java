@@ -117,10 +117,6 @@ public class MidiInterface {
         track.add(createMidiEvent(ShortMessage.NOTE_OFF, 1, note, velocity, start + duration));
     }
 
-    private void clearTrack(){
-
-    }
-
 
     /*
      * @RETURN shortMessage ("shortcut" function)
