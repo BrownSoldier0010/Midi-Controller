@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import murphystudio.models.MainModel;
 import murphystudio.objects.Accord;
 import murphystudio.objects.TimelineElement;
@@ -18,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class PisteController extends Controller {
     public HashMap<Integer,ArrayList<Accord>> trackNotes = new HashMap<>();
-public ArrayList<Accord> emply = new ArrayList<>();
+public ArrayList<Accord> empty = new ArrayList<>();
     @FXML
     public TextField piste_name_input;
     @FXML
@@ -130,14 +129,12 @@ public ArrayList<Accord> emply = new ArrayList<>();
         replaceNote(chords);
         this.timeline.getChildren().clear();
         recreteTimline();
-
-
         updateEnd();
     }
 
     private void replaceNote(TimelineElement chords){
-        emply.add(new Accord());
-        this.trackNotes.replace(this.chords.indexOf(chords),emply);
+        empty.add(new Accord());
+        this.trackNotes.replace(this.chords.indexOf(chords), empty);
         this.chords.remove(chords);
     }
 
