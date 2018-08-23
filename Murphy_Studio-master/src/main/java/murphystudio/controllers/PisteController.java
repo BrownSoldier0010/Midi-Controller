@@ -1,9 +1,11 @@
 package murphystudio.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Line;
 import murphystudio.models.MainModel;
 import murphystudio.objects.Accord;
 import murphystudio.objects.TimelineElement;
@@ -16,10 +18,17 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class PisteController extends Controller {
+
+    /**
+     *
+     * TrackNotes is a list of the notes currently in the piste
+     */
     public HashMap<Integer, ArrayList<Accord>> trackNotes = new HashMap<>();
     public ArrayList<Accord> empty = new ArrayList<>();
     @FXML
     public TextField piste_name_input;
+    @FXML
+    public Line headLine;
     @FXML
     public Slider piste_volume_slider;
     @FXML
@@ -125,29 +134,37 @@ public class PisteController extends Controller {
      *
      * @param chords
      */
-    public void removeChords(TimelineElement chords) {
-        replaceNote(chords);
-        this.timeline.getChildren().remove(chords);
-        recreteTimeline();
+    private void removeChords(TimelineElement chords) {
+        removeNote(chords);
+        recreateTimeline();
         updateEnd();
     }
 
-    private void replaceNote(TimelineElement chords) {
+    /**
+     * Removes the Note from all arrays
+     * @param chords
+     */
+    private void removeNote(TimelineElement chords) {
+        this.timeline.getChildren().remove(chords);
         this.trackNotes.remove(this.chords.indexOf(chords));
         System.out.println(this.trackNotes.size());
         System.out.println(this.trackNotes.keySet());
-        this.chords.clear();
+        this.chords.remove(chords);
     }
 
-    public void recreteTimeline() {
+    /**
+     * Recreates the TimeLine event with the notes in trackNotes
+     * adds it to the Sequence on the piste
+     */
+    private void recreateTimeline() {
         this.sequence = null;
-        for (int i:this.trackNotes.keySet()) {
+        for (int i : this.trackNotes.keySet()) {
             this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
         }
     }
 
 
-    public void updateEnd() {
+    private void updateEnd() {
         this.end = 0.0;
         for (TimelineElement e : this.chords) {
             if (e.getEnd() > this.end) {
@@ -204,5 +221,9 @@ public class PisteController extends Controller {
                     instrument
             );
         }
+    }
+
+    public void setDisplayName(ActionEvent actionEvent) {
+        this.setName(actionEvent.getSource().toString());
     }
 }
