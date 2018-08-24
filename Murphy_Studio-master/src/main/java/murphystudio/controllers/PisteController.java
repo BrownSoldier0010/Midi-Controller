@@ -84,9 +84,14 @@ public class PisteController extends Controller {
         dialog.setTitle("Choose an instrument");
         dialog.setHeaderText("Select your instrument");
         Optional<String> result = dialog.showAndWait();
-        String selected = "cancelled.";
+        String selected ="";
+        //Sets instrument to selected item
         if (result.isPresent()) {
             selected = result.get();
+        }
+        //if no selected Item Chooses the default Choice this.piste_instrument_selection.getItem().get(0)
+        else {
+            selected = dialog.getDefaultChoice().toString();
         }
         this.piste_instrument_selection.getSelectionModel().select(selected);
 
