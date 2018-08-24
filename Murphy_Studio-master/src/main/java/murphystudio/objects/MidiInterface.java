@@ -258,7 +258,7 @@ public class MidiInterface {
 
     public long getChordGridSize(ArrayList<Accord> accords) {
         long size = 0;
-        if (accords == null){
+        if (accords.isEmpty()){
             accords = new ArrayList<>();
         }
         for (Accord a : accords) {

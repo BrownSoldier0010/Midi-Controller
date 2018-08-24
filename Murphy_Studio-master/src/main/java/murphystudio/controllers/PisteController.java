@@ -12,10 +12,7 @@ import murphystudio.objects.TimelineElement;
 
 import javax.sound.midi.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class PisteController extends Controller {
 
@@ -24,11 +21,8 @@ public class PisteController extends Controller {
      * TrackNotes is a list of the notes currently in the piste
      */
     public HashMap<Integer, ArrayList<Accord>> trackNotes = new HashMap<>();
-    public ArrayList<Accord> empty = new ArrayList<>();
     @FXML
     public TextField piste_name_input;
-    @FXML
-    public Line headLine;
     @FXML
     public Slider piste_volume_slider;
     @FXML
@@ -85,8 +79,16 @@ public class PisteController extends Controller {
         for (Map.Entry<String, Integer> instrument : this.model.intrumentsMIDI.entrySet()) {
             this.piste_instrument_selection.getItems().add(instrument.getKey());
         }
-
-        this.piste_instrument_selection.getSelectionModel().select("Choir");
+        //Choice box for choosing your instrument for the piste before its Initialized
+        ChoiceDialog dialog = new ChoiceDialog(this.piste_instrument_selection.getItems().get(0),this.piste_instrument_selection.getItems());
+        dialog.setTitle("Choose an instrument");
+        dialog.setHeaderText("Select your instrument");
+        Optional<String> result = dialog.showAndWait();
+        String selected = "cancelled.";
+        if (result.isPresent()) {
+            selected = result.get();
+        }
+        this.piste_instrument_selection.getSelectionModel().select(selected);
 
         recordPisteBtn.setOnMouseClicked(event -> {
             if (this.model.mainExternInterface.sequencer.isRecording()) {
@@ -160,6 +162,7 @@ public class PisteController extends Controller {
         this.sequence = null;
         for (int i : this.trackNotes.keySet()) {
             this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
+            //this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get()));
         }
     }
 
@@ -182,15 +185,10 @@ public class PisteController extends Controller {
         try {
             this.sequencer = MidiSystem.getSequencer();
             this.sequencer.open();
-
             this.instrument = this.model.intrumentsMIDI.get(this.piste_instrument_selection.getSelectionModel().getSelectedItem());
-
             this.playBtn.setText("Pause");
-
             this.sequence = model.midiInterface.cropSequence(this.sequence, 0, 0);
-
             this.sequence = this.model.midiInterface.setInstrument(this.sequence, instrument);
-
             this.sequencer.setSequence(this.sequence);
             this.sequencer.setTempoInBPM(this.model.midiInterface.tempo);
             this.sequencer.setLoopCount(0);
@@ -211,7 +209,6 @@ public class PisteController extends Controller {
 
     public void addSequence(Sequence trackFromChords) {
         this.instrument = this.model.intrumentsMIDI.get(this.piste_instrument_selection.getSelectionModel().getSelectedItem());
-
         if (this.sequence == null)
             this.sequence = this.model.midiInterface.mergeSequence(trackFromChords, null, instrument);
         else {
@@ -222,7 +219,6 @@ public class PisteController extends Controller {
             );
         }
     }
-
     public void setDisplayName(ActionEvent actionEvent) {
         this.setName(actionEvent.getSource().toString());
     }
