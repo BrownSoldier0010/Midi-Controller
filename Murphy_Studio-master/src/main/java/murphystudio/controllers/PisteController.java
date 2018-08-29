@@ -53,6 +53,7 @@ public class PisteController extends Controller {
     private boolean isPlaying = false;
     private Integer instrument;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.end = 0.0;

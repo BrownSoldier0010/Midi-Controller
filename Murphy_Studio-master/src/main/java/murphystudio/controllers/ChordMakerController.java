@@ -35,7 +35,7 @@ public class ChordMakerController extends Controller implements Initializable {
     public BorderPane chordMakerPane;
     private ToggleGroup noteChordGroup = new ToggleGroup();
 
-    private Boolean isSeventh = false, isFifth = false, isMinor = false;
+    private Boolean isSeventh = false, isFifth = false, isMinor = false, isSingle = false;
 
     private LinkedHashMap<String, Method> listToFunc;
     public ListView<String> chordListView;
@@ -45,6 +45,8 @@ public class ChordMakerController extends Controller implements Initializable {
 
     // 0 : Not / 1 : In function / 2 : Function finished
     private int printFromTile = 0;
+
+    private String lastCalled = "setMajor";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -66,6 +68,7 @@ public class ChordMakerController extends Controller implements Initializable {
         doRadio.fire();
 
         try {
+            listToFunc.put(("Single Note"), Accord.class.getMethod("setNotChord"));
             listToFunc.put(("Minor"), Accord.class.getMethod("setMinor"));
             listToFunc.put(("Major"), Accord.class.getMethod("setMajor"));
             listToFunc.put(("Dominant Seventh"), Accord.class.getMethod("setDominantSeven"));
@@ -109,18 +112,18 @@ public class ChordMakerController extends Controller implements Initializable {
 
             Method lastFunction = model.selectedChord.getMethodCalled();
 
-            if (newValue == doRadio  )   model.selectedChord = new Accord(60, isMinor, isFifth, isSeventh);
-            if (newValue == doDRadio )   model.selectedChord = new Accord(61, isMinor, isFifth, isSeventh);
-            if (newValue == reRadio  )   model.selectedChord = new Accord(62, isMinor, isFifth, isSeventh);
-            if (newValue == reDRadio )   model.selectedChord = new Accord(63, isMinor, isFifth, isSeventh);
-            if (newValue == miRadio  )   model.selectedChord = new Accord(64, isMinor, isFifth, isSeventh);
-            if (newValue == faRadio  )   model.selectedChord = new Accord(65, isMinor, isFifth, isSeventh);
-            if (newValue == faDRadio )   model.selectedChord = new Accord(66, isMinor, isFifth, isSeventh);
-            if (newValue == solRadio )   model.selectedChord = new Accord(67, isMinor, isFifth, isSeventh);
-            if (newValue == solDRadio)   model.selectedChord = new Accord(68, isMinor, isFifth, isSeventh);
-            if (newValue == laRadio  )   model.selectedChord = new Accord(69, isMinor, isFifth, isSeventh);
-            if (newValue == laDRadio )   model.selectedChord = new Accord(70, isMinor, isFifth, isSeventh);
-            if (newValue == siRadio  )   model.selectedChord = new Accord(71, isMinor, isFifth, isSeventh);
+            if (newValue == doRadio  )   model.selectedChord = new Accord(60, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == doDRadio )   model.selectedChord = new Accord(61, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == reRadio  )   model.selectedChord = new Accord(62, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == reDRadio )   model.selectedChord = new Accord(63, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == miRadio  )   model.selectedChord = new Accord(64, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == faRadio  )   model.selectedChord = new Accord(65, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == faDRadio )   model.selectedChord = new Accord(66, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == solRadio )   model.selectedChord = new Accord(67, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == solDRadio)   model.selectedChord = new Accord(68, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == laRadio  )   model.selectedChord = new Accord(69, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == laDRadio )   model.selectedChord = new Accord(70, isMinor, isFifth, isSeventh, isSingle);
+            if (newValue == siRadio  )   model.selectedChord = new Accord(71, isMinor, isFifth, isSeventh, isSingle);
 
 
             try {
@@ -238,7 +241,7 @@ public class ChordMakerController extends Controller implements Initializable {
     public void setModel(MainModel model) {
         this.model = model;
 
-        model.selectedChord = new Accord(60, false, false, false);
+        model.selectedChord = new Accord(60, false, false, false, false);
         model.selectedChord.setMajor();
         updtInfos();
 

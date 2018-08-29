@@ -25,6 +25,7 @@ public class Accord implements Cloneable{
     private boolean isMinor;
     private boolean isFifth;
     private boolean isSeventh;
+    private boolean isSingle;
 
     private Method methodCalled;
 
@@ -57,6 +58,7 @@ public class Accord implements Cloneable{
         this.velocity = 50;
     }
 
+
     public Accord(int dominant)
     {
         this.dominant = dominant;
@@ -85,13 +87,14 @@ public class Accord implements Cloneable{
         this.velocity = 50;
     }
 
-    public Accord(int dominant, Boolean isMinor, Boolean isFifth, Boolean isSeventh) {
+    public Accord(int dominant, Boolean isMinor, Boolean isFifth, Boolean isSeventh, Boolean isSingle) {
         this.dominant = dominant;
         dominantName = characterHashMap.get(dominant%12);
 
         this.isMinor = isMinor;
         this.isFifth = isFifth;
         this.isSeventh = isSeventh;
+        this.isSingle = isSingle;
         this.velocity = 50;
 
         if ( isMinor ) setMinor();
@@ -104,6 +107,8 @@ public class Accord implements Cloneable{
                 setSeventh();
             if ( isFifth )
                 setFifth();
+            if (isSingle)
+                setNotChord();
         }
     }
 
@@ -125,6 +130,16 @@ public class Accord implements Cloneable{
 
 
     /* ---- GETTER ---- */
+
+    public void setNotChord()
+    {
+        notes.clear();
+        notes.add(dominant);
+        name = dominantName;
+
+        try { methodCalled = Accord.class.getMethod("setNotChord"); }
+        catch (NoSuchMethodException e) { e.printStackTrace(); }
+    }
 
     public void setMajor()
     {
@@ -381,6 +396,7 @@ public class Accord implements Cloneable{
         try {
             return new Method[]
                     {
+                            Accord.class.getMethod("setNotChord"),
                             Accord.class.getMethod("setMajor"),
                             Accord.class.getMethod("setMinor"),
                             Accord.class.getMethod("setDominantSeven"),
