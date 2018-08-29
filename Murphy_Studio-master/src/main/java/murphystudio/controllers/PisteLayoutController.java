@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import murphystudio.models.MainModel;
 
 import java.io.IOException;
@@ -41,7 +42,10 @@ public class PisteLayoutController extends Controller
             System.out.println(pistes.size());
             if ( ! this.isPlaying )
             {
-                for (PisteController piste : pistes) piste.play();
+                for (PisteController piste : pistes) {
+                    piste.play();
+
+                }
                 this.isPlaying = true;
             }
             else

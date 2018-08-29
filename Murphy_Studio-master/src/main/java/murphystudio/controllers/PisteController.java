@@ -1,5 +1,6 @@
 package murphystudio.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -14,14 +15,15 @@ import murphystudio.objects.TimelineElement;
 
 import javax.sound.midi.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class PisteController extends Controller {
-    public HashMap<Integer,ArrayList<Accord>> trackNotes = new HashMap<>();
-public ArrayList<Accord> emply = new ArrayList<>();
+
+    /**
+     *
+     * TrackNotes is a list of the notes currently in the piste
+     */
+    public HashMap<Integer, ArrayList<Accord>> trackNotes = new HashMap<>();
     @FXML
     public TextField piste_name_input;
     @FXML
@@ -89,8 +91,21 @@ public ArrayList<Accord> emply = new ArrayList<>();
         for (Map.Entry<String, Integer> instrument : this.model.intrumentsMIDI.entrySet()) {
             this.piste_instrument_selection.getItems().add(instrument.getKey());
         }
-
-        this.piste_instrument_selection.getSelectionModel().select("Choir");
+        //Choice box for choosing your instrument for the piste before its Initialized
+        ChoiceDialog dialog = new ChoiceDialog(this.piste_instrument_selection.getItems().get(0),this.piste_instrument_selection.getItems());
+        dialog.setTitle("Choose an instrument");
+        dialog.setHeaderText("Select your instrument");
+        Optional<String> result = dialog.showAndWait();
+        String selected ="";
+        //Sets instrument to selected item
+        if (result.isPresent()) {
+            selected = result.get();
+        }
+        //if no selected Item Chooses the default Choice this.piste_instrument_selection.getItem().get(0)
+        else {
+            selected = dialog.getDefaultChoice().toString();
+        }
+        this.piste_instrument_selection.getSelectionModel().select(selected);
 
         recordPisteBtn.setOnMouseClicked(event -> {
             if (this.model.mainExternInterface.sequencer.isRecording()) {
@@ -138,33 +153,38 @@ public ArrayList<Accord> emply = new ArrayList<>();
      *
      * @param chords
      */
-    public void removeChords(TimelineElement chords) {
-        replaceNote(chords);
-        this.timeline.getChildren().clear();
-        recreteTimline();
-
-
+    private void removeChords(TimelineElement chords) {
+        removeNote(chords);
+        recreateTimeline();
         updateEnd();
     }
 
-    private void replaceNote(TimelineElement chords){
-        emply.add(new Accord());
-        this.trackNotes.replace(this.chords.indexOf(chords),emply);
+    /**
+     * Removes the Note from all arrays
+     * @param chords
+     */
+    private void removeNote(TimelineElement chords) {
+        this.timeline.getChildren().remove(chords);
+        this.trackNotes.remove(this.chords.indexOf(chords));
+        System.out.println(this.trackNotes.size());
+        System.out.println(this.trackNotes.keySet());
         this.chords.remove(chords);
     }
 
-    public void recreteTimline(){
+    /**
+     * Recreates the TimeLine event with the notes in trackNotes
+     * adds it to the Sequence on the piste
+     */
+    private void recreateTimeline() {
         this.sequence = null;
-        for (int i = 0; i < trackNotes.size(); i++) {
+        for (int i : this.trackNotes.keySet()) {
             this.addSequence(this.model.midiInterface.createTrackFromChords(this.trackNotes.get(i)));
-            this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get(i)));
+            //this.addChords(this.model.midiInterface.getChordGridSize(this.trackNotes.get()));
         }
-
-
     }
 
 
-    public void updateEnd() {
+    private void updateEnd() {
         this.end = 0.0;
         for (TimelineElement e : this.chords) {
             if (e.getEnd() > this.end) {
@@ -182,15 +202,10 @@ public ArrayList<Accord> emply = new ArrayList<>();
         try {
             this.sequencer = MidiSystem.getSequencer();
             this.sequencer.open();
-
             this.instrument = this.model.intrumentsMIDI.get(this.piste_instrument_selection.getSelectionModel().getSelectedItem());
-
             this.playBtn.setText("Pause");
-
             this.sequence = model.midiInterface.cropSequence(this.sequence, 0, 0);
-
             this.sequence = this.model.midiInterface.setInstrument(this.sequence, instrument);
-
             this.sequencer.setSequence(this.sequence);
             this.sequencer.setTempoInBPM(this.model.midiInterface.tempo);
             this.sequencer.setLoopCount(0);
@@ -211,7 +226,6 @@ public ArrayList<Accord> emply = new ArrayList<>();
 
     public void addSequence(Sequence trackFromChords) {
         this.instrument = this.model.intrumentsMIDI.get(this.piste_instrument_selection.getSelectionModel().getSelectedItem());
-
         if (this.sequence == null)
             this.sequence = this.model.midiInterface.mergeSequence(trackFromChords, null, instrument);
         else {
@@ -221,5 +235,8 @@ public ArrayList<Accord> emply = new ArrayList<>();
                     instrument
             );
         }
+    }
+    public void setDisplayName(ActionEvent actionEvent) {
+        this.setName(actionEvent.getSource().toString());
     }
 }

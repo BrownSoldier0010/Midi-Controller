@@ -117,39 +117,27 @@ public class ChordSorterController extends Controller {
     {
         // Création de la tile + composants (Rectangle, Label)
         Accord tmpAccord = new Accord();
-
         if ( ! isRandomTile && ! isEmptyTile ) tmpAccord = model.getSelectedChord();
         else if ( isRandomTile ) tmpAccord.setRandom();
-
         Tile newTile = new Tile(tmpAccord);
-
         isRandomTile = isEmptyTile = false;
-
-
         // Click droit
         ContextMenu rightClickContext = new ContextMenu();
-
         MenuItem menuItemDelete = new MenuItem("Delete");
         MenuItem menuItemSetRandom = new MenuItem("Set Random");
         SeparatorMenuItem seperator = new SeparatorMenuItem();
         MenuItem menuItemRythm1 = new MenuItem("Rythme 1");
         MenuItem menuItemRythm2 = new MenuItem("Rythme 2");
         MenuItem menuItemRythm3 = new MenuItem("Rythme 3");
-
         rightClickContext.getStyleClass().add("background");
-
         rightClickContext.getItems().addAll(menuItemDelete, menuItemSetRandom, seperator, menuItemRythm1, menuItemRythm2, menuItemRythm3);
-
         menuItemDelete.setOnAction(MouseEvent -> deleteSelected());
         menuItemRythm1.setOnAction(MouseEvent -> selected.accord.Rythm = 1);
         menuItemRythm2.setOnAction(MouseEvent -> selected.accord.Rythm = 2);
         menuItemRythm3.setOnAction(MouseEvent -> selected.accord.Rythm = 3);
-
         // On affiche le Context Menu
         newTile.setOnContextMenuRequested(contextMenuEvent -> rightClickContext.show(newTile, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
-
         tileList.getItems().add(newTile);
-
         tiles.add(newTile);
         initEventHandler(newTile);
         setSelected(newTile);
@@ -166,58 +154,45 @@ public class ChordSorterController extends Controller {
                 return;
             }
             setSelected(newTile);
-
             final Dragboard dragboard = newTile.startDragAndDrop(TransferMode.ANY);
             dragboard.setDragView(newTile.snapshot(null, null), event.getX(), event.getY());
-
             final ClipboardContent content = new ClipboardContent();
             content.putString(String.valueOf(tileList.getItems().indexOf(newTile)));
             dragboard.setContent(content);
-
             event.consume();
         });
-
         newTile.setOnDragOver(event -> {
             if (event.getGestureSource() != newTile && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-
         newTile.setOnDragEntered(event -> {
             if (event.getGestureSource() != newTile && event.getDragboard().hasString()) {
                 newTile.setOpacity(0.3);
             }
         });
-
         newTile.setOnDragExited(event -> {
             if (event.getGestureSource() != newTile && event.getDragboard().hasString()) {
                 newTile.setOpacity(1);
             }
         });
-
         newTile.setOnDragDropped(event -> {
-
             Dragboard db = event.getDragboard();
             boolean success = false;
-
             if (db.hasString()) {
                 System.out.println();
                 int draggedIdx = Integer.parseInt(db.getString());
                 int thisIdx = tileList.getItems().indexOf(newTile);
-
                 tiles.remove(draggedIdx);
                 tiles.add(thisIdx, selected);
-
                 tileList.getItems().remove(draggedIdx);
                 tileList.getItems().add(thisIdx, event.getGestureSource());
                 success = true;
             }
             event.setDropCompleted(success);
-
             event.consume();
         });
-
         newTile.setOnDragDone(DragEvent::consume);
         /* --- </Drag and Drop> --- */
 
@@ -230,37 +205,28 @@ public class ChordSorterController extends Controller {
             if ( selected == null ) return;
             deleteSelected();
         });
-
         /* --- <Drag and Drop> --- */
-
         deleteBtn.setOnDragOver(event -> {
             if (event.getGestureSource() != deleteBtn && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             event.consume();
         });
-
         deleteBtn.setOnDragEntered(Event::consume);
-
         deleteBtn.setOnDragExited(Event::consume);
-
         deleteBtn.setOnDragDropped(event -> {
             deleteSelected();
             event.consume();
         });
-
         /* --- </Drag and Drop> --- */
-
         emptyButton.setOnMouseClicked(event -> {
             isEmptyTile = true;
             createTile();
         });
-
         randomButton.setOnMouseClicked(event -> {
             isRandomTile = true;
             createTile();
         });
-
         addToTimeline.setOnMouseClicked(event -> {
             PisteController piste = timelineSelector.getSelectionModel().getSelectedItem();
             if (piste != null){
@@ -280,17 +246,14 @@ public class ChordSorterController extends Controller {
         }else {
             setSelected(tiles.get(tiles.size() - 1));
         }
-
     }
 
     private void setSelected(Tile newSelectedTile)
     {
 //        newSelectedTile.rectangle.setStroke(Color.RED);
         selected = newSelectedTile;
-
         model.selectedTile = newSelectedTile;
         model.chordMakerController.updateFromTile(newSelectedTile);
-
         DragResizer.makeResizable(selected.rectangle);
     }
 
@@ -327,20 +290,15 @@ public class ChordSorterController extends Controller {
         else
         {
             togglePlayTrack.setText("Pause");
-
             try {
                 this.sequencer.setSequence(this.model.midiInterface.createTrackFromChords(getAccords()));
-
                 this.sequencer.setTickPosition(0);
-
                 this.sequencer.setTempoInBPM(model.midiInterface.tempo);
                 this.sequencer.setLoopCount(1000);
-
                 this.sequencer.start();
             } catch (InvalidMidiDataException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -389,9 +347,7 @@ public class ChordSorterController extends Controller {
     public void setModel(MainModel model) {
         this.model = model;
         crossAdd.setOnMouseClicked(event -> createTile());
-
         initTrackBtn();
-
         this.sequencer = model.midiInterface.getSequencer();
 
     }
@@ -413,7 +369,6 @@ public class ChordSorterController extends Controller {
     private ArrayList<Accord> getAccords()
     {
         ArrayList<Accord> accords = new ArrayList<>();
-
         for ( int i = 0; i < tiles.size(); i++ )
             accords.add(tiles.get(i).accord);
         return accords;

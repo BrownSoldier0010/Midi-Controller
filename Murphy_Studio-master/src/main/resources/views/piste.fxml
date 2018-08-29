@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="128.0" prefWidth="500.0" styleClass="piste" stylesheets="@/css/style.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="murphystudio.controllers.PisteController">
    <left>
@@ -17,7 +18,7 @@
          <children>
             <HBox>
                <children>
-                  <TextField fx:id="piste_name_input" prefHeight="31.0" prefWidth="116.0">
+                  <TextField fx:id="piste_name_input" onAction="#setDisplayName" prefHeight="31.0" prefWidth="116.0">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
@@ -54,7 +55,8 @@
             <AnchorPane fx:id="timeline" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="128.0" prefWidth="2048.0" styleClass="piste-timeline">
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding></AnchorPane>
+               </padding>
+              </AnchorPane>
          </content>
       </ScrollPane>
    </center>

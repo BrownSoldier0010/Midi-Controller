@@ -51,11 +51,9 @@ public class Accord implements Cloneable{
     {
         this.dominant = 60;
         this.dominantName = "#";
-        notes = new ArrayList<>();
-
+        notes = new ArrayList<>(Collections.singletonList(this.dominant));
         this.isEmpty = true;
         this.isRandom = false;
-
         this.velocity = 50;
     }
 
