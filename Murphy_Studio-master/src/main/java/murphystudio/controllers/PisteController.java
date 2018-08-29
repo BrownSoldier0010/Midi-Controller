@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.VLineTo;
 import javafx.stage.Stage;
 import murphystudio.models.MainModel;
 import murphystudio.objects.Accord;
@@ -58,6 +61,15 @@ public ArrayList<Accord> emply = new ArrayList<>();
             La méthode initialize est appelée lorsque l'on fait FXMLLoader.load(); (CF murphystudio.application.Controller - @loadView() )
          */
         /* Tout ce qui agit sur le fxml, tu le code ici */
+
+        for (int i = 20; i < this.timeline.getPrefWidth(); i += 16)
+        {
+            Path path = new Path();
+            path.getElements().add(new MoveTo(i, 0.0f));
+            path.getElements().add(new VLineTo(150.0f));
+
+            this.timeline.getChildren().add(path);
+        }
     }
 
     private void initAll() {
